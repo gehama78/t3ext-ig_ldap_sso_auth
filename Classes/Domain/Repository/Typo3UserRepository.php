@@ -170,6 +170,7 @@ class Typo3UserRepository
         if (!GeneralUtility::inList('be_users,fe_users', $table)) {
             throw new InvalidUserTableException('Invalid table "' . $table . '"', 1404891712);
         }
+        // Fix values for TYPO3 8.7 and MariaDB 10.4
         $keys = array_keys($data);
         foreach ($keys as $key) {
             if ($data[$key] === '\'\'') {
@@ -178,6 +179,7 @@ class Typo3UserRepository
                 $data[$key] = null;
             }
         }
+        $data['lockToDomain'] = '';
 
         $tableConnection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable($table);
@@ -229,6 +231,7 @@ class Typo3UserRepository
 
         $cleanData = $data;
         unset($cleanData['__extraData']);
+        // Fix values for TYPO3 8.7 and MariaDB 10.4
         $keys = array_keys($cleanData);
         foreach ($keys as $key) {
             if ($cleanData[$key] === '\'\'') {
@@ -237,6 +240,7 @@ class Typo3UserRepository
                 $cleanData[$key] = null;
             }
         }
+        $cleanData['lockToDomain'] = '';
 
         $affectedRows = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable($table)
