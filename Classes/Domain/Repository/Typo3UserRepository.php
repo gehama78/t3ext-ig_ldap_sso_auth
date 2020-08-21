@@ -170,6 +170,14 @@ class Typo3UserRepository
         if (!GeneralUtility::inList('be_users,fe_users', $table)) {
             throw new InvalidUserTableException('Invalid table "' . $table . '"', 1404891712);
         }
+        $keys = array_keys($data);
+        foreach ($keys as $key) {
+            if ($data[$key] === '\'\'') {
+                $data[$key] = '';
+            } elseif($data[$key] === 'NULL') {
+                $data[$key] = null;
+            }
+        }
 
         $tableConnection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable($table);
@@ -221,6 +229,14 @@ class Typo3UserRepository
 
         $cleanData = $data;
         unset($cleanData['__extraData']);
+        $keys = array_keys($cleanData);
+        foreach ($keys as $key) {
+            if ($cleanData[$key] === '\'\'') {
+                $cleanData[$key] = '';
+            } elseif($cleanData[$key] === 'NULL') {
+                $cleanData[$key] = null;
+            }
+        }
 
         $affectedRows = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable($table)
